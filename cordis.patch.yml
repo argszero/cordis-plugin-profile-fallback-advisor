@@ -1,0 +1,59 @@
+# The @argszero/cordis-plugin-profile-fallback-advisor bundle patch: mount and go.
+#
+# From 0.1.7-rc.1 a profile that has plugins installed into it still chats, while
+# every child process it spawns dies before running anything (#7635):
+#
+#   Error: code run failed (worker-exit): subprocess scope exited before its
+#   bootstrap consumed the launch request
+#   Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@deepseek-ai/cordis'
+#     imported from <profile>/node_modules/@deepseek-ai/dsh-subprocess/lib/index.js
+#
+# Cause: through 0.1.6 the boot package healed a shared peer fallback for
+# profiles on every start. From 0.1.7-rc.1 that writer is retired — the boot
+# package computes a runtime resolution and writes no module-resolution files —
+# while `autoInstallPeers: false` is unchanged. The resolution lives only in the
+# launching process (loader interception) and in worker threads (environment
+# data). A subprocess gets neither: `ctx.subprocess.spawn` starts a bare `node`,
+# the runner deletes every `NODE_*`/`TSX_*` variable before launch, and the
+# runner protocol carries no resolution field.
+#
+# This plugin does not change how the harness resolves modules. It scans the
+# same upward walk a child performs, logs what it found (and what the scan does
+# not cover), and attaches ONE durable user-role advisory per agent to the
+# failing tool result, naming:
+#
+#   - the package the child could not find, and the importer that needed it;
+#   - what the walk found at each level it visits;
+#   - the two options the user owns:
+#       1. `autoInstallPeers: true` in the profile's pnpm-workspace.yaml, then
+#          `pnpm install` in the profile directory — the plugin mounts keep
+#          using the installation's single `cordis`, because the installation's
+#          names stay reserved for the launching process;
+#       2. mount this plugin with `repair: true` (see below).
+#     Both need a dsh restart: the resolution is built at boot.
+#
+# Optional config:
+#
+#   - set:
+#       - id: profile-fallback-advisor
+#         config:
+#           # false (default) = advisory only: nothing is ever written.
+#           # true = additionally link the installation's own copies into
+#           # `<home>/profiles/node_modules`, the cross-profile fallback that
+#           # 0.1.7 neither writes nor deletes (so nothing else is writing it).
+#           # Additive ONLY: it creates and refreshes links; the only entries it
+#           # replaces are a dangling symlink or a `dsh`-managed module proxy. It
+#           # never touches the profile's own pnpm-owned node_modules and never
+#           # removes an entry it does not recognize. Refreshed on every boot, so
+#           # a later dsh upgrade cannot leave the links dangling.
+#           repair: false
+#           exclude: []              # tool-name wildcards never watched
+#           href: ''                 # optional URL quoted in the advisory
+#
+# The repair is off by default on purpose: it writes into the harness's own home
+# tree, and the advisory alone is enough for the model to stop retrying and hand
+# the choice to the user.
+
+- insert:
+    - id: profile-fallback-advisor
+      name: '@argszero/cordis-plugin-profile-fallback-advisor'
