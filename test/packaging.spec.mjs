@@ -44,7 +44,7 @@ const manifest = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'))
  * peer range admits. Adding a line here without running the suite on it is how a
  * wrong range gets published, so the list is the contract, not the manifest.
  */
-const SUPPORTED_LINES = ['0.1.2-rc.1', '0.1.3-alpha.2', '0.1.5-alpha.1', '0.1.6-alpha.1', '0.1.7-alpha.1', '0.1.7-rc.1']
+const SUPPORTED_LINES = ['0.1.2-rc.1', '0.1.3-alpha.2', '0.1.5-alpha.1', '0.1.6-alpha.1', '0.1.7-alpha.1', '0.1.7-rc.1', '0.2.1-rc.3']
 
 /** Every file under `dir` whose name ends with one of `extensions`. */
 function walk(dir, extensions, found = []) {

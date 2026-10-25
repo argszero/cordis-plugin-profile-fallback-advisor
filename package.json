@@ -1,7 +1,7 @@
 {
   "name": "@argszero/cordis-plugin-profile-fallback-advisor",
   "description": "Turns the silent aftermath of a retired fallback writer into a diagnosis with two ways out. Through 0.1.6 the boot package healed a shared peer fallback for profiles; from 0.1.7-rc.1 the writer is gone while `autoInstallPeers: false` is unchanged, so a profile with plugins installed into it chats fine while every child process it spawns dies before running anything (discussion #7635): `Error: code run failed (worker-exit): subprocess scope exited before its bootstrap consumed the launch request` followed by `Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@deepseek-ai/cordis' imported from <profile>/node_modules/@deepseek-ai/dsh-subprocess/lib/index.js`. The loss is invisible inside the launching process, which holds an in-memory resolution table and a loader interception; a child gets neither, because `ctx.subprocess.spawn` starts a bare `node`, the runner deletes every `NODE_*`/`TSX_*` variable before launch, and the runner protocol carries no resolution field — so `run_code` and voice input fail while chat works. This plugin scans at boot with the same upward walk a child performs, logs the verdicts and the scan's own limits, and attaches ONE durable user-role advisory per agent naming the package, its importer, what the walk found, and the two options the user owns (let pnpm install the peers, or mount this plugin with `repair: true`). The opt-in repair links the installation's own copies into `<home>/profiles/node_modules` — the directory 0.1.7 neither writes nor deletes — and is strictly additive: it never touches the profile's own pnpm-owned `node_modules`, never removes an entry it does not recognize, and never links a name whose copy exists nowhere.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/types/index.d.ts",
@@ -48,14 +48,14 @@
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.2",
-    "@deepseek-ai/dsh-llm": ">=0.1.2-rc.1 <0.2.0 || >=0.1.3-alpha.2 <0.2.0 || >=0.1.5-alpha.1 <0.2.0 || >=0.1.6-alpha.1 <0.2.0 || >=0.1.7-alpha.1 <0.2.0",
-    "@deepseek-ai/dsh-tools": ">=0.1.2-rc.1 <0.2.0 || >=0.1.3-alpha.2 <0.2.0 || >=0.1.5-alpha.1 <0.2.0 || >=0.1.6-alpha.1 <0.2.0 || >=0.1.7-alpha.1 <0.2.0"
+    "@deepseek-ai/dsh-llm": ">=0.1.2-rc.1 <0.2.0 || >=0.1.3-alpha.2 <0.2.0 || >=0.1.5-alpha.1 <0.2.0 || >=0.1.6-alpha.1 <0.2.0 || >=0.1.7-alpha.1 <0.2.0 || >=0.2.1-rc.1 <0.2.1",
+    "@deepseek-ai/dsh-tools": ">=0.1.2-rc.1 <0.2.0 || >=0.1.3-alpha.2 <0.2.0 || >=0.1.5-alpha.1 <0.2.0 || >=0.1.6-alpha.1 <0.2.0 || >=0.1.7-alpha.1 <0.2.0 || >=0.2.1-rc.1 <0.2.1"
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "^4.0.2",
-    "@deepseek-ai/dsh-llm": "0.1.7-rc.1",
-    "@deepseek-ai/dsh-system-prompt": "0.1.7-rc.1",
-    "@deepseek-ai/dsh-tools": "0.1.7-rc.1",
+    "@deepseek-ai/dsh-llm": "0.2.1-rc.3",
+    "@deepseek-ai/dsh-system-prompt": "0.2.1-rc.3",
+    "@deepseek-ai/dsh-tools": "0.2.1-rc.3",
     "@types/node": "^22.10.2",
     "semver": "^7.6.0",
     "typescript": "^5.5.0"

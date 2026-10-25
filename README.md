@@ -49,12 +49,12 @@ peer only the installation has.
 ## Install
 
 ```sh
-cd ~/.dsh/profiles/<profile>
-pnpm add @argszero/cordis-plugin-profile-fallback-advisor
+dsh plugin add --profile <profile> github:argszero/cordis-plugin-profile-fallback-advisor
 ```
 
-Then mount it — either through **Settings → Plugins** in the app, or by adding to
-the profile's `cordis.patch.yml`:
+The verb installs the package and records it in the profile's
+`dsh.profile.bundles`, so it is mounted in one step. To mount it by hand instead,
+add it to the profile's `cordis.patch.yml`:
 
 ```yaml
 - insert:
@@ -165,14 +165,14 @@ network failure).
 ## Compatibility
 
 Built and tested against `@deepseek-ai/dsh-tools` / `dsh-llm` on the **0.1.7**
-line (`0.1.7-rc.1`), and the peer range admits the lines the plugin was reasoned
+line (`0.1.7-rc.1`) and again on the **0.2.1** line (`0.2.1-rc.3`), and the peer range admits the lines the plugin was reasoned
 about — `0.1.2-rc.1`, `0.1.3-alpha.2`, `0.1.5-alpha.1` (the last generation that
-shipped a working writer), `0.1.6-alpha.1`, `0.1.7-alpha.1`, `0.1.7-rc.1`:
+shipped a working writer), `0.1.6-alpha.1`, `0.1.7-alpha.1`, `0.1.7-rc.1`, `0.2.1-rc.3`:
 
 ```
 ^4.0.2                                                                    # @deepseek-ai/cordis
->=0.1.2-rc.1 <0.2.0 || >=0.1.3-alpha.2 <0.2.0 || >=0.1.5-alpha.1 <0.2.0 || >=0.1.6-alpha.1 <0.2.0 || >=0.1.7-alpha.1 <0.2.0   # @deepseek-ai/dsh-llm
->=0.1.2-rc.1 <0.2.0 || >=0.1.3-alpha.2 <0.2.0 || >=0.1.5-alpha.1 <0.2.0 || >=0.1.6-alpha.1 <0.2.0 || >=0.1.7-alpha.1 <0.2.0   # @deepseek-ai/dsh-tools
+>=0.1.2-rc.1 <0.2.0 || >=0.1.3-alpha.2 <0.2.0 || >=0.1.5-alpha.1 <0.2.0 || >=0.1.6-alpha.1 <0.2.0 || >=0.1.7-alpha.1 <0.2.0 || >=0.2.1-rc.1 <0.2.1   # @deepseek-ai/dsh-llm
+>=0.1.2-rc.1 <0.2.0 || >=0.1.3-alpha.2 <0.2.0 || >=0.1.5-alpha.1 <0.2.0 || >=0.1.6-alpha.1 <0.2.0 || >=0.1.7-alpha.1 <0.2.0 || >=0.2.1-rc.1 <0.2.1   # @deepseek-ai/dsh-tools
 ```
 
 The defect itself is platform-neutral (it is a module-resolution and subprocess
